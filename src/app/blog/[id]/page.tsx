@@ -1,6 +1,20 @@
 import Image from "next/image";
+import { notFound } from "next/navigation";
 
-export default function BlogPost() {
+export default async function BlogPost({ params }: { params: { id: string } }) {
+  const paramsId = params.id;
+
+  // Fetch data
+  const res = await fetch(
+    `https://jsonplaceholder.typicode.com/posts/${paramsId}`
+  );
+
+  if (!res.ok) {
+    notFound();
+  }
+
+  const post = await res.json();
+
   return (
     <section className="min-h-screen px-6 py-20 md:px-24 text-[var(--foreground)] bg-[var(--background)]">
       <article className="max-w-8xl mx-auto space-y-20">
@@ -10,12 +24,11 @@ export default function BlogPost() {
           <div className="space-y-6 text-center md:text-left">
             <div className="space-y-4">
               <h1 className="text-4xl md:text-5xl font-bold leading-tight">
-                Ini Judul{" "}
-                <span className="text-[var(--primary)]">Postnya Nanti</span>
+                {post.title}
               </h1>
               <p className="text-[var(--muted-foreground)] text-lg">
-                Ini adalah paragraf pembuka atau subjudul yang menjelaskan inti dari
-                artikel blog ini.
+                Ini adalah paragraf pembuka atau subjudul yang menjelaskan inti
+                dari artikel blog ini.
               </p>
             </div>
 
@@ -29,8 +42,12 @@ export default function BlogPost() {
                 className="rounded-full object-cover"
               />
               <div className="text-left">
-                <p className="font-semibold text-[var(--foreground)]">John Doe</p>
-                <p className="text-sm text-[var(--muted-foreground)]">@johndoe</p>
+                <p className="font-semibold text-[var(--foreground)]">
+                  John Doe
+                </p>
+                <p className="text-sm text-[var(--muted-foreground)]">
+                  @johndoe
+                </p>
               </div>
             </div>
           </div>
