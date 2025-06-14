@@ -1,33 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Blog() {
-  const posts = [
-    {
-      title: "How to Build a Stunning Portfolio in 2025",
-      description:
-        "Step-by-step guide for creating a professional and modern portfolio using modern web tools.",
-      date: "June 5, 2025",
-      slug: "build-stunning-portfolio-2025",
-      image: "/blog/portfolio.png",
-    },
-    {
-      title: "Understanding Dark Mode Design Patterns",
-      description:
-        "Explore best practices and pitfalls when designing dark mode interfaces.",
-      date: "May 28, 2025",
-      slug: "dark-mode-design-patterns",
-      image: "/blog/darkmode.png",
-    },
-    {
-      title: "Boost UX with Motion & Microinteractions",
-      description:
-        "Small animations can make a big impact. Learn how to use them effectively.",
-      date: "May 20, 2025",
-      slug: "ux-motion-microinteractions",
-      image: "/blog/motion.png",
-    },
-  ];
+async function getData() {
+  const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch data");
+  }
+
+  return res.json();
+}
+
+export default async function Blog() {
+  const posts = await getData();
 
   return (
     <section className="min-h-screen px-6 py-20 md:px-16 bg-[var(--background)] text-[var(--foreground)]">
@@ -45,13 +30,13 @@ export default function Blog() {
 
         {/* Blog List */}
         <div className="space-y-12">
-          {posts.map((post) => (
-            <Link href={`/blog/${post.slug}`} key={post.slug}>
+          {posts.map((post: { id: number; title: string; body: string; date: string }) => (
+            <Link href={`/blog/${post.id}`} key={post.id}>
               <article className="flex flex-col md:flex-row items-start gap-6 rounded-2xl p-4 transition-colors duration-300 group">
                 {/* Image */}
                 <div className="w-full md:w-1/3 overflow-hidden rounded-xl shadow-sm">
                   <Image
-                    src={post.image}
+                    src="/illustrationporto.png"
                     alt={post.title}
                     width={400}
                     height={250}
@@ -65,7 +50,7 @@ export default function Blog() {
                     {post.title}
                   </h2>
                   <p className="text-[var(--muted-foreground)] text-sm md:text-base">
-                    {post.description}
+                    {post.body}
                   </p>
                   <div className="text-xs text-[var(--muted-foreground)] mt-1">
                     📅 {post.date}
