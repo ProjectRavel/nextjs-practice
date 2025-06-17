@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Button from "@/components/button/button";
+import SignIn from "@/components/googleSignIn";
 
 export default function Home() {
   return (
@@ -23,6 +24,8 @@ export default function Home() {
         </p>
 
         <Button text="See our work" url="/about" />
+
+        <SignIn />
       </div>
 
       {/* Kanan - gambar */}
