@@ -1,19 +1,71 @@
 "use client";
-import useSWR from "swr";
+
+import { useSession } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
+import Image from "next/image";
 
 export default function Dashboard() {
-  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+  const { data: session, status } = useSession();
 
-  const { data, error, isLoading } = useSWR(
-    "https://jsonplaceholder.typicode.com/posts",
-    fetcher
-  );
-
-  console.log(data)
+  if (status === "loading") {
+    return <div className="text-center mt-10 text-muted">Loading...</div>;
+  }
 
   return (
-    <div>
-      <h1 className="text-5xl font-bold">Dashboard</h1>
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{
+        backgroundColor: "var(--background)",
+        color: "var(--foreground)",
+      }}
+    >
+      <div
+        className="w-full max-w-md p-6 rounded-2xl shadow-lg border"
+        style={{
+          backgroundColor: "var(--background)",
+          borderColor: "var(--foreground)",
+        }}
+      >
+        {session ? (
+          <div className="text-center space-y-4">
+            <Image
+              src={session.user?.image ?? ""}
+              alt={session.user?.name ?? ""}
+              width={100}
+              height={100}
+              className="mx-auto rounded-full"
+            />
+            <h2 className="text-2xl font-semibold">
+              Selamat datang, {session.user?.name}
+            </h2>
+            <p className="text-sm opacity-80">{session.user?.email}</p>
+            <button
+              onClick={() => signOut()}
+              className="w-full py-2 rounded-lg font-medium"
+              style={{
+                backgroundColor: "var(--primary)",
+                color: "white",
+              }}
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <div className="text-center space-y-6">
+            <h2 className="text-2xl font-semibold">Login ke Akun Kamu</h2>
+            <button
+              onClick={() => signIn("google")}
+              className="w-full py-2 rounded-lg font-medium"
+              style={{
+                backgroundColor: "var(--primary)",
+                color: "white",
+              }}
+            >
+              Login dengan Google
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
