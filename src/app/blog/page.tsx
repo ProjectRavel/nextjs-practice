@@ -2,7 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 async function getData() {
-  const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+  const res = await fetch("http://localhost:3000/api/posts", {
+    cache: "no-cache",
+  });
 
   if (!res.ok) {
     throw new Error("Failed to fetch data");
@@ -13,6 +15,8 @@ async function getData() {
 
 export default async function Blog() {
   const posts = await getData();
+
+  console.log(posts)
 
   return (
     <section className="min-h-screen px-6 py-20 md:px-16 bg-[var(--background)] text-[var(--foreground)]">
@@ -30,8 +34,8 @@ export default async function Blog() {
 
         {/* Blog List */}
         <div className="space-y-12">
-          {posts.map((post: { id: number; title: string; body: string; date: string }) => (
-            <Link href={`/blog/${post.id}`} key={post.id}>
+          {posts.map((post: { _id: string; title: string; content: string; desc: string, date: string }) => (
+            <Link href={`/blog/${post._id}`} key={post._id}>
               <article className="flex flex-col md:flex-row items-start gap-6 rounded-2xl p-4 transition-colors duration-300 group">
                 {/* Image */}
                 <div className="w-full md:w-1/3 overflow-hidden rounded-xl shadow-sm">
@@ -50,7 +54,7 @@ export default async function Blog() {
                     {post.title}
                   </h2>
                   <p className="text-[var(--muted-foreground)] text-sm md:text-base">
-                    {post.body}
+                    {post.desc}
                   </p>
                   <div className="text-xs text-[var(--muted-foreground)] mt-1">
                     📅 {post.date}

@@ -2,12 +2,9 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 
 export default async function BlogPost({ params }: { params: { id: string } }) {
-  const paramsId = params.id;
+  const id = await params.id;
 
-  // Fetch data
-  const res = await fetch(
-    `https://jsonplaceholder.typicode.com/posts/${paramsId}`
-  );
+  const res = await fetch(`http://localhost:3000/api/posts/${id}`);
 
   if (!res.ok) {
     notFound();
@@ -27,8 +24,7 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
                 {post.title}
               </h1>
               <p className="text-[var(--muted-foreground)] text-lg">
-                Ini adalah paragraf pembuka atau subjudul yang menjelaskan inti
-                dari artikel blog ini.
+                {post.desc}
               </p>
             </div>
 
@@ -43,7 +39,7 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
               />
               <div className="text-left">
                 <p className="font-semibold text-[var(--foreground)]">
-                  John Doe
+                  {post.username}
                 </p>
                 <p className="text-sm text-[var(--muted-foreground)]">
                   @johndoe
@@ -67,22 +63,7 @@ export default async function BlogPost({ params }: { params: { id: string } }) {
 
         {/* Konten Blog */}
         <div className="prose prose-invert prose-lg max-w-none text-[var(--foreground)] prose-headings:text-[var(--primary)] prose-a:text-[var(--primary)] prose-a:underline-offset-4 prose-img:rounded-xl">
-          <p>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Atque,
-            sunt repellendus? Provident, blanditiis? Maxime voluptatum nihil
-            aspernatur iure error laborum, numquam nobis quia, placeat magnam
-            illo odit quaerat aperiam quasi? Lorem ipsum dolor sit amet
-            consectetur adipisicing elit. Temporibus, doloremque nihil. Neque,
-            ex! Sint facilis non, laborum, quis mollitia ipsa soluta adipisci
-            itaque neque nam exercitationem sunt autem voluptas deserunt. Ut
-            inventore sit quidem incidunt. Obcaecati doloribus explicabo
-            corporis qui accusantium ut soluta maiores ratione error pariatur!
-            Dignissimos asperiores libero ratione praesentium sapiente
-            blanditiis error, suscipit qui est perspiciatis repellat. Dolor
-            minus laborum repellat nihil, consequuntur cumque quod praesentium
-            non, aut aperiam alias in ad? Suscipit id sit facere architecto
-            magni blanditiis pariatur ipsa, et, autem veritatis ullam in nobis!
-          </p>
+          <p>{post.content}</p>
         </div>
       </article>
     </section>
