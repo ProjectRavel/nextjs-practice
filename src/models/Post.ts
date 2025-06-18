@@ -30,5 +30,4 @@ const postSchema = new Schema(
   }
 );
 
-// ✅ Cek apakah model sudah ada sebelumnya
 export default mongoose.models.Post || mongoose.model("Post", postSchema);
