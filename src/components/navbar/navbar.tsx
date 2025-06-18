@@ -3,6 +3,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ToggleDarkModeButton from "../button/toogleDarkMode";
+import { useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
+import Image from "next/image";
 
 const links = [
   { id: 1, title: "Home", href: "/" },
@@ -14,6 +17,7 @@ const links = [
 ];
 
 export default function NavigationBar() {
+  const { data: session, status } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
 
@@ -46,9 +50,38 @@ export default function NavigationBar() {
               </Link>
             );
           })}
-          <button className="text-lg text-white cursor-pointer font-medium transition bg-[var(--primary)] px-3 rounded">
-            Logout
-          </button>
+
+          {session && status === "authenticated" ? (
+            <>
+              <button
+                className="text-lg text-white cursor-pointer font-medium transition bg-[var(--primary)] px-3 rounded"
+                onClick={() => signOut()}
+              >
+                Logout
+              </button>
+              {session.user && session.user.image && (
+                <Image
+                  src={session.user.image as string}
+                  alt={
+                    session.user.name
+                      ? `${session.user.name}'s profile picture`
+                      : "User profile picture"
+                  }
+                  width={32}
+                  height={32}
+                  className="inline-block rounded-full mr-2"
+                />
+              )}
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="text-lg text-white cursor-pointer font-medium transition bg-[var(--primary)] px-3 rounded"
+              tabIndex={0}
+            >
+              Login
+            </Link>
+          )}
         </div>
 
         {/* Toggle Dark Mode + Hamburger (mobile) */}
@@ -90,7 +123,9 @@ export default function NavigationBar() {
                 <Link
                   key={link.id}
                   href={link.href}
-                  className={`text-[var(--foreground)] text-lg font-medium py-2 hover:bg-indigo-600 rounded transition focus:outline-none focus:ring-2 focus:ring-indigo-500 ${isActive ? "text-[var(--primary)]" : ""}`}
+                  className={`text-[var(--foreground)] text-lg font-medium py-2 hover:bg-indigo-600 rounded transition focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                    isActive ? "text-[var(--primary)]" : ""
+                  }`}
                   tabIndex={0}
                   onClick={() => setMenuOpen(false)}
                 >
