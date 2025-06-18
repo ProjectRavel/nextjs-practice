@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function RegsiterForm() {
@@ -16,18 +15,42 @@ export default function RegsiterForm() {
     password: "",
   });
 
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setError({
+      username: "",
+      email: "",
+      password: "",
+    });
+
+    if (!form.username || !form.email || !form.password) {
+      setError({
+        username: form.username ? "" : "Username is required",
+        email: form.email ? "" : "Email is required",
+        password: form.password ? "" : "Password is required",
+      });
+      return;
+    }
+
     try {
-      const res = await fetch("http://localhost:3000/api/register", {
+      const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(form),
       });
-    } catch (error) {}
+
+      if (res.ok) {
+        const data = await res.json();
+        console.log(data);
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -50,6 +73,9 @@ export default function RegsiterForm() {
                 onChange={(e) => setForm({ ...form, username: e.target.value })}
                 required
               />
+              {error.username && (
+                <p className="text-red-500 text-xs mt-1">{error.username}</p>
+              )}
             </div>
             <div className="mb-5">
               <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
